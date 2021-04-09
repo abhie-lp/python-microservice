@@ -33,11 +33,13 @@ class ProductUser(db.Model):
     user_id: int
     product_id: int
 
+    __table_args__ = (UniqueConstraint(
+            "user_id", "product_id", name="user_product_unique"
+        ),)
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     product_id = db.Column(db.Integer)
-
-    UniqueConstraint("user_id", "product_id", name="user_product_unique")
 
 
 @app.route("/products/")
