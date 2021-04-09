@@ -11,6 +11,8 @@ services:
             - .:/app
         depends_on:
             - db
+        extra_hosts:
+            - "docker.for.linux.localhost:$DOCKERHOST"
     queue:
         build:
             context: .
