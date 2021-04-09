@@ -1,5 +1,8 @@
+from producer import publish
+import requests
+
 from dataclasses import dataclass
-from flask import Flask, json, jsonify
+from flask import Flask, jsonify, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
@@ -40,6 +43,21 @@ class ProductUser(db.Model):
 @app.route("/products/")
 def index():
     return jsonify(Product.query.all())
+
+
+@app.route("/product/<int:id>/like/", methods=["POST"])
+def like(id):
+    # Call the api to get random user
+    req = requests.get("http://docker.for.linux.localhost:8000/user/")
+    json = req.json()
+    try:
+        product_user = ProductUser(user_id=json["id"], product_id=id)
+        db.session.add(product_user)
+        db.session.commit()
+        publish("product_liked", id)
+    except:
+        abort(400, "You already liked this product.")
+    return jsonify(req.json())
 
 
 if __name__ == "__main__":

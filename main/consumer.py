@@ -16,9 +16,7 @@ channel.queue_declare("main")
 
 
 def callback(ch, method: str, properties: pika.BasicProperties, body):
-    print("Callback from main")
     data = loads(body)
-    print(data)
     
     content_type = properties.content_type.split("_", 1)[1]
     if content_type == "created":
@@ -41,6 +39,5 @@ def callback(ch, method: str, properties: pika.BasicProperties, body):
 
 channel.basic_consume(queue="main", on_message_callback=callback, auto_ack=True)
 
-print("STARTED CONSUMING FLASK")
 channel.start_consuming()
 channel.close()
